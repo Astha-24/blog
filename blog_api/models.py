@@ -7,13 +7,13 @@ from django.conf import settings
 class UserProfileManager(BaseUserManager):
     """Manager for User Profiles"""
 
-    def create_user(self,email,name,password=None):
+    def create_user(self,email,name,about='',password=None):
         """Create a new user Profile"""
         if not email:
             raise ValueError('Users must have an email address')
 
         email=self.normalize_email(email)
-        user=self.model(email=email,name=name)
+        user=self.model(email=email,name=name,about=about)
 
         user.set_password(password)
         user.save(using=self._db)
@@ -21,9 +21,9 @@ class UserProfileManager(BaseUserManager):
         return user
 
     def create_superuser(self,email,name,password):
-        import pdb;pdb.set_trace()
         """Create and save a new superuser with given details"""
-        user=self.create_user(email,name,password)
+
+        user=self.create_user(email,name,password=password)
         user.is_superuser = True
         user.is_staff = True
         user.save(using=self._db)
@@ -33,7 +33,7 @@ class UserProfile(AbstractBaseUser,PermissionsMixin):
     """Database model for users in the system"""
     email= models.EmailField(max_length=255, unique=True)
     name=models.CharField(max_length=255)
-    about=models.CharField(max_length=511)
+    about=models.CharField(max_length=511,blank=True)
     is_active=models.BooleanField(default=True)
     is_staff=models.BooleanField(default=False)
 
@@ -59,6 +59,7 @@ class Category(models.Model):
     def __str__(self):
         return self.category_name
 
+
 class Story(models.Model):
     """Stories collection"""
     title = models.CharField(max_length=255)
@@ -73,6 +74,8 @@ class Story(models.Model):
     def __str__(self):
         """Return the model as a string"""
         return self.title
+
+
 
 class Comment(models.Model):
         comment_message = models.TextField(blank = False)
