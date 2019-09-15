@@ -25,7 +25,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class StoryFeedItemSerializer(serializers.ModelSerializer):
     """Serializes profile feed items"""
+    # category = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='category_name'
+    #  )
     class Meta:
         model = models.Story
         fields = ('id','title','content','author','category','created_on')
         extra_kwargs = {'author':{'read_only': True}}
+        depth = 1

@@ -10,4 +10,6 @@ router.register('story',views.StoryFeedViewSet)
 urlpatterns=[
         path('',include(router.urls)),
         path('login/',views.UserLoginApiView.as_view()),
+        path('view-all-stories/', views.ViewAllVerifiedStory.as_view()),
+
 ]
