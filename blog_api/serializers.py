@@ -24,7 +24,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             return user
 
 class StoryFeedItemSerializer(serializers.ModelSerializer):
-    """Serializes profile feed items"""
+    """Serializes Story items"""
     # category = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='category_name'
@@ -34,3 +34,11 @@ class StoryFeedItemSerializer(serializers.ModelSerializer):
         fields = ('id','title','content','author','category','created_on')
         extra_kwargs = {'author':{'read_only': True}}
         depth = 1
+
+class CommentItemSerializer(serializers.ModelSerializer):
+    """Serializes Comment items"""
+
+    class Meta:
+        model = models.Comment
+        fields = ('id','comment_message','comment_by','comment_time','story_on')
+        extra_kwargs = {'comment_by':{'read_only': True}}

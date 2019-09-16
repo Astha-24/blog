@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from blog_api import serializers
 from blog_api import models
 from blog_api import permissions
+from blog_api import utils
 import json
 # Create your views here.
 
@@ -45,11 +46,23 @@ class StoryFeedViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 class ViewAllVerifiedStory(APIView):
-    serializer_class = serializers.StoryFeedItemSerializer
+    serializer_class = serializers.CommentItemSerializer
     def get(self,request,format=None):
-        """Returns all the verified stories"""
-        queryset = models.Story.objects.filter(verified=True)
-        serializer = self.serializer_class(queryset, many=True)
-        return Response({
-            "Stories":serializer.data
-        })
+        """Returns all or one verified stories"""
+        storyid = self.request.query_params.get('storyid')
+        respose_payload = utils.fetch_stories_by_action(storyid)
+        return Response(respose_payload)
+    def post(self, request):
+        """Create a comment for a story"""
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(comment_by=request.user)
+            return Response({
+                'message':'Comment posted successfully'
+            })
+        else:
+            return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+            )
